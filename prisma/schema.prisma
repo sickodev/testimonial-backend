@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id            String         @id
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  name          String
+  email         String         @unique
+  phone         String         @unique
+  organisations Organisation[]
+}
+
+model Organisation {
+  id           Int            @id @default(autoincrement())
+  name         String
+  website      String         @unique
+  ownerId      String
+  pictureURL   String
+  slug         String         @unique
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime
+  owner        User           @relation(fields: [ownerId], references: [id])
+  testimonials Testimonials[]
+}
+
+model Testimonials {
+  id           Int          @id @default(autoincrement())
+  name         String
+  email        String
+  profession   String?
+  company      String?
+  rating       Int
+  feedback     String?
+  orgId        Int
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime
+  organisation Organisation @relation(fields: [orgId], references: [id])
+}
